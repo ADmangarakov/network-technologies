@@ -1,5 +1,6 @@
 package com.github.ADmangarakov;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
 
@@ -23,8 +24,19 @@ public class View implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             List<InetAddress> forRemove = new LinkedList<>();
             clones.forEach((inetAddress, date) -> {
-                if (System.currentTimeMillis() - date.getTime() < TTL) System.out.println("Online: " + inetAddress);
-                else forRemove.add(inetAddress);
+                if (System.currentTimeMillis() - date.getTime() < TTL) {
+                    try {
+                        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                    } catch (InterruptedException | IOException e) {
+                        System.out.println("Can't clear the console!");
+                        System.out.println("------------------------------");
+                    }
+                    System.out.println("Online: " + inetAddress);
+                }
+                else {
+                    System.out.println("Offline: " + inetAddress);
+                    forRemove.add(inetAddress);
+                }
             });
             forRemove.forEach(clones::remove);
             try {

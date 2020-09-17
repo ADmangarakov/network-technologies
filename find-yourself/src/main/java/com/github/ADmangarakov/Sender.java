@@ -13,7 +13,7 @@ public class Sender implements Runnable {
     public Sender(String groupInetAddrName) throws IOException {
         this.groupAddr = InetAddress.getByName(groupInetAddrName);
 
-        multicastSocket = new MulticastSocket();
+        multicastSocket = new MulticastSocket(8080);
         multicastSocket.joinGroup(
                 new InetSocketAddress(groupAddr, 8080),
                 NetworkInterface.getByInetAddress(groupAddr)

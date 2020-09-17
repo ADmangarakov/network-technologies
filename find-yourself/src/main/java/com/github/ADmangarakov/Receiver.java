@@ -3,9 +3,7 @@ package com.github.ADmangarakov;
 import java.io.IOException;
 import java.net.*;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 public class Receiver implements Runnable {
     private final MulticastSocket multicastSocket;
@@ -17,7 +15,7 @@ public class Receiver implements Runnable {
         groupAddr = InetAddress.getByName(groupInetAddrName);
         this.clones = clones;
 
-        multicastSocket = new MulticastSocket();
+        multicastSocket = new MulticastSocket(8080);
         multicastSocket.joinGroup(
                 new InetSocketAddress(groupAddr, 8080),
                 NetworkInterface.getByInetAddress(groupAddr)
