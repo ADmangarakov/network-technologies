@@ -9,15 +9,17 @@ public class Receiver implements Runnable {
     private final MulticastSocket multicastSocket;
     private final InetAddress groupAddr;
     private DatagramPacket packet;
-    private final Map<InetAddress, Date> clones;
+    private final Integer port;
+    private final Map<SocketAddress, Date> clones;
 
-    public Receiver(String groupInetAddrName, Map<InetAddress, Date> clones) throws IOException {
+    public Receiver(String groupInetAddrName, Integer port, Map<SocketAddress, Date> clones) throws IOException {
         groupAddr = InetAddress.getByName(groupInetAddrName);
+        this.port = port;
         this.clones = clones;
 
-        multicastSocket = new MulticastSocket(8080);
+        multicastSocket = new MulticastSocket(port);
         multicastSocket.joinGroup(
-                new InetSocketAddress(groupAddr, 8080),
+                new InetSocketAddress(groupAddr, port),
                 NetworkInterface.getByInetAddress(groupAddr)
         );
         byte[] incMsg = new byte[256];
@@ -34,7 +36,7 @@ public class Receiver implements Runnable {
                 Thread.currentThread().interrupt();
                 break;
             }
-            clones.merge(packet.getAddress(), new Date(System.currentTimeMillis()), (o, n) -> n);
+            clones.merge(packet.getSocketAddress(), new Date(System.currentTimeMillis()), (o, n) -> n);
         }
         try {
             multicastSocket.leaveGroup(

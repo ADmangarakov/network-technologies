@@ -8,19 +8,17 @@ public class Sender implements Runnable {
     private final DatagramPacket packet;
     private final String MSG = "Hello there!";
     private final InetAddress groupAddr;
+    private final Integer port;
     private final static int MAX_ATTEMPT = 5;
 
-    public Sender(String groupInetAddrName) throws IOException {
+    public Sender(String groupInetAddrName, Integer port) throws IOException {
         this.groupAddr = InetAddress.getByName(groupInetAddrName);
+        this.port = port;
 
-        multicastSocket = new MulticastSocket(8080);
-        multicastSocket.joinGroup(
-                new InetSocketAddress(groupAddr, 8080),
-                NetworkInterface.getByInetAddress(groupAddr)
-        );
+        multicastSocket = new MulticastSocket();
 
         byte[] msg = MSG.getBytes();
-        packet = new DatagramPacket(msg, msg.length, groupAddr, 8080);
+        packet = new DatagramPacket(msg, msg.length, groupAddr, port);
     }
 
     public void run() {

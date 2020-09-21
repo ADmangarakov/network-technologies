@@ -6,16 +6,16 @@ public class Finder {
     private Sender sender;
     private Receiver receiver;
     private final View view;
-    public Finder(String groupInetAddrName) {
+    public Finder(String groupInetAddrName, Integer port) {
         try {
-            sender = new Sender(groupInetAddrName);
+            sender = new Sender(groupInetAddrName, port);
         } catch (IOException e) {
             System.err.println("Unable to create sender: " + e.getLocalizedMessage());
             System.exit(1);
         }
         view = View.getInstance();
         try {
-            receiver = new Receiver(groupInetAddrName, view.getClones());
+            receiver = new Receiver(groupInetAddrName, port, view.getClones());
         } catch (IOException e) {
             System.err.println("Unable to create receiver: " + e.getLocalizedMessage());
             System.exit(1);
@@ -24,7 +24,7 @@ public class Finder {
     }
 
     public static void main(String[] args){
-        Finder finder = new Finder(args[0]);
+        Finder finder = new Finder(args[0], Integer.parseInt(args[1]));
         finder.start();
     }
 

@@ -1,7 +1,7 @@
 package com.github.ADmangarakov;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.SocketAddress;
 import java.util.*;
 
 public class View implements Runnable {
@@ -14,7 +14,7 @@ public class View implements Runnable {
     }
 
     private final int TTL = 5000;
-    private final Map<InetAddress, Date> clones;
+    private final Map<SocketAddress, Date> clones;
 
     private View() {
         clones = Collections.synchronizedMap(new HashMap<>());
@@ -22,33 +22,35 @@ public class View implements Runnable {
 
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
-            List<InetAddress> forRemove = new LinkedList<>();
-            clones.forEach((inetAddress, date) -> {
+            List<SocketAddress> forRemove = new LinkedList<>();
+            clones.forEach((socketAddress, date) -> {
                 if (System.currentTimeMillis() - date.getTime() < TTL) {
-                    try {
-                        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-                    } catch (InterruptedException | IOException e) {
-                        System.out.println("Can't clear the console!");
-                        System.out.println("------------------------------");
-                    }
-                    System.out.println("Online: " + inetAddress);
+                    System.out.println("Online: " + socketAddress);
                 }
                 else {
-                    System.out.println("Offline: " + inetAddress);
-                    forRemove.add(inetAddress);
+                    System.out.println("Offline: " + socketAddress);
+                    forRemove.add(socketAddress);
                 }
             });
             forRemove.forEach(clones::remove);
             try {
-                Thread.sleep(200);
+                Thread.sleep(500);
+
             } catch (InterruptedException e) {
                 System.err.println("View interrupted!");
                 Thread.currentThread().interrupt();
+            } finally {
+                try {
+                    new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                } catch (InterruptedException | IOException e) {
+                    System.out.println("Can't clear the console!");
+                    System.out.println("------------------------------");
+                }
             }
         }
     }
 
-    public Map<InetAddress, Date> getClones() {
+    public Map<SocketAddress, Date> getClones() {
         return clones;
     }
 }
