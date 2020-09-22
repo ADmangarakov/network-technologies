@@ -22,12 +22,12 @@ public class Receiver implements Runnable {
                 new InetSocketAddress(groupAddr, port),
                 NetworkInterface.getByInetAddress(groupAddr)
         );
-        byte[] incMsg = new byte[256];
-        packet = new DatagramPacket(incMsg, incMsg.length);
     }
 
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
+            byte[] incMsg = new byte[1024];
+            packet = new DatagramPacket(incMsg, incMsg.length, groupAddr, port);
             try {
                 multicastSocket.receive(packet);
             } catch (IOException e) {
@@ -36,11 +36,12 @@ public class Receiver implements Runnable {
                 Thread.currentThread().interrupt();
                 break;
             }
+            System.out.println(new String(packet.getData(), 0, packet.getLength()));
             clones.merge(packet.getSocketAddress(), new Date(System.currentTimeMillis()), (o, n) -> n);
         }
         try {
             multicastSocket.leaveGroup(
-                    new InetSocketAddress(groupAddr, 8080),
+                    new InetSocketAddress(groupAddr, port),
                     NetworkInterface.getByInetAddress(groupAddr)
             );
         } catch (IOException e) {

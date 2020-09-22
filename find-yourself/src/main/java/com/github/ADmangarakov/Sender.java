@@ -39,14 +39,14 @@ public class Sender implements Runnable {
                 System.out.println("Tries " + (MAX_ATTEMPT - failedAttempts) + " more times.");
             }
             try {
-                Thread.sleep(2500);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
         try {
             multicastSocket.leaveGroup(
-                    new InetSocketAddress(groupAddr, 8080),
+                    new InetSocketAddress(groupAddr, port),
                     NetworkInterface.getByInetAddress(groupAddr)
             );
         } catch (IOException e) {
