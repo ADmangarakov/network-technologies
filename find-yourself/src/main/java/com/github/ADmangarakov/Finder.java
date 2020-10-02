@@ -20,7 +20,6 @@ public class Finder {
             System.err.println("Unable to create receiver: " + e.getLocalizedMessage());
             System.exit(1);
         }
-
     }
 
     public static void main(String[] args){

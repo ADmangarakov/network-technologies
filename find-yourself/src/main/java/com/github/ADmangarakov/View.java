@@ -26,16 +26,14 @@ public class View implements Runnable {
             clones.forEach((socketAddress, date) -> {
                 if (System.currentTimeMillis() - date.getTime() < TTL) {
                     System.out.println("Online: " + socketAddress);
-                }
-                else {
+                } else {
                     System.out.println("Offline: " + socketAddress);
                     forRemove.add(socketAddress);
                 }
             });
             forRemove.forEach(clones::remove);
             try {
-                Thread.sleep(500);
-
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 System.err.println("View interrupted!");
                 Thread.currentThread().interrupt();

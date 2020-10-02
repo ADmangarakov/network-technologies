@@ -36,8 +36,7 @@ public class Receiver implements Runnable {
                 Thread.currentThread().interrupt();
                 break;
             }
-            System.out.println(new String(packet.getData(), 0, packet.getLength()));
-            clones.merge(packet.getSocketAddress(), new Date(System.currentTimeMillis()), (o, n) -> n);
+            clones.put(packet.getSocketAddress(), new Date(System.currentTimeMillis()));
         }
         try {
             multicastSocket.leaveGroup(
