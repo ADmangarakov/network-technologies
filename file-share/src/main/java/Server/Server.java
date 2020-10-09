@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,9 +12,11 @@ import java.util.concurrent.TimeUnit;
 public class Server {
     private final ServerSocket incomingClients;
     private final ExecutorService clientsHandlerService = Executors.newFixedThreadPool(4);
+    private final Thread viewThread;
 
     private Server(int port) throws IOException {
         incomingClients = new ServerSocket(port);
+        viewThread = new Thread(View.getInstance());
     }
 
     public static void main(String[] args) {
@@ -23,7 +24,7 @@ public class Server {
             System.err.println("Enter the port!");
             return;
         }
-        Server server = null;
+        Server server;
         try {
             server = new Server(Integer.parseInt(args[0]));
         } catch (IOException e) {
@@ -34,12 +35,14 @@ public class Server {
     }
 
     private void start() {
-        if (!Files.exists(Path.of("./src/main/resources/uploads"))) {
-            if (!new File("./src/main/resources/uploads").mkdir()) {
+        if (!Files.exists(Paths.get("./uploads"))) {
+            if (!new File("./uploads").mkdir()) {
                 System.err.println("Unable to create resource dir");
                 return;
             }
         }
+
+        viewThread.start();
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 FileReceiver receiver = new FileReceiver(incomingClients.accept());
@@ -68,6 +71,7 @@ public class Server {
             Thread.currentThread().interrupt();
         }
         try {
+            viewThread.interrupt();
             incomingClients.close();
         } catch (IOException e) {
             System.err.println("Unable to close server socket!");
