@@ -51,12 +51,12 @@ public class Receiver implements Runnable {
         datagramSocket.close();
     }
 
-    private void processMessage(Message message, SocketAddress source) throws IOException {
+    private void processMessage(Message message, SocketAddress source) {
         if (message instanceof SystemMessage) {
             systemMessageAnalyzer.processMessage((SystemMessage) message, source);
         } else {
             if (new Random().nextInt(100) >= packetLoss) {
-                userMessageAnalyzer.processMessage((UserMessage) message, source);
+                userMessageAnalyzer.processMessage((UserMessage)message, source);
             }
         }
     }

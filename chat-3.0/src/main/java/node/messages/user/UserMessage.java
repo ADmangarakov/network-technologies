@@ -15,6 +15,11 @@ public class UserMessage extends Message {
     }
 
     @Override
+    public String toString() {
+        return sourceName + ": " + text;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Message)) return false;

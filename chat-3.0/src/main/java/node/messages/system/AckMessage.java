@@ -11,6 +11,11 @@ public class AckMessage extends SystemMessage {
     }
 
     @Override
+    public String toString() {
+        return "AckMessage " + getSourceName() + " : " + getUuid();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Message)) return false;

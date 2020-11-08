@@ -37,12 +37,13 @@ public class Node {
         DatagramSocket datagramSocket;
         try {
             datagramSocket = new DatagramSocket(port, InetAddress.getLoopbackAddress());
-            sender = new Sender(datagramSocket, name);
+            sender = new Sender(datagramSocket);
             userMessageAnalyzer = new UserMessageAnalyzer(sender, name);
             if (alternate != null) {
                 systemMessageAnalyzer = new SystemMessageAnalyzer(sender, userMessageAnalyzer,
-                        datagramSocket.getLocalSocketAddress(), name, alternate);
-                sender.sendHello(alternate, alternate);
+                        datagramSocket.getLocalSocketAddress(), name);
+
+                systemMessageAnalyzer.sendHello(alternate);
             } else {
                 systemMessageAnalyzer = new SystemMessageAnalyzer(sender, name, userMessageAnalyzer, datagramSocket.getLocalSocketAddress());
             }
